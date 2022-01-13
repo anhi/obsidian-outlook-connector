@@ -1,0 +1,5 @@
+pywin32
+ftfy
+notion
+pandoc
+pandas
