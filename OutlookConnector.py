@@ -90,9 +90,15 @@ class OutlookConnector:
 
     def getActiveTodos(self):
         todos = self.ns.getDefaultFolder(self.olFolderTodo).Items
+        # Task with [Complete] = False or Note with FlagStatus != 1
+        MessageClass = "http://schemas.microsoft.com/mapi/proptag/0x001a001e"
+        Complete = "http://schemas.microsoft.com/mapi/id/{00062003-0000-0000-C000-000000000046}/811c000b"
+        FlagStatus = "http://schemas.microsoft.com/mapi/proptag/0x10900003"
 
+        restriction = f"@SQL=(({MessageClass}='IPM.Task' AND {Complete}=0) OR ({MessageClass}='IPM.Note' AND (NOT {FlagStatus}=1)))"
+        
         print("Getting active todos...")
-        active_todos = list(filter(self.safeGetIsActive, todos))
+        active_todos = todos.Restrict(f'{restriction}')
 
         return active_todos
         # for todo in active_todos:
