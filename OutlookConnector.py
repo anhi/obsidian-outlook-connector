@@ -61,6 +61,16 @@ class OutlookConnector:
 
         return result
 
+    def todos_to_markdown(self, todos):
+        result = ""
+
+        for todo in todos:
+            try:
+                result += f"[ ] {todo.Subject}\n"
+            except e:
+                pass
+
+
     def todays_agenda_as_markdown(self):
         calendar=self.get_events(dt.date.today(),
                                    dt.date.today() + dt.timedelta(days=1))
