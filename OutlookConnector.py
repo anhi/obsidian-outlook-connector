@@ -87,6 +87,8 @@ class OutlookConnector:
 
         return active_todos
 
+    def active_todos_as_markdown(self):
+        return self.todos_to_markdown(self.get_active_todos())
 
 if __name__ == '__main__':
     from OutlookConnector import OutlookConnector
