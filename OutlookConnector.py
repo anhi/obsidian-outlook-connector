@@ -91,27 +91,21 @@ class OutlookConnector:
         return self.todos_to_markdown(self.get_active_todos())
 
 if __name__ == '__main__':
-    from OutlookConnector import OutlookConnector
     import datetime as dt
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-e", "--print_events", action="store_true", 
+                        help="Print markdown representation of today's events")
+    parser.add_argument("-t", "--print_tasks",  action="store_true",
+                        help="Print markdown representation of open tasks")
+
+    args = parser.parse_args()
 
     oc = OutlookConnector()
-    events = oc.get_events(
-        dt.date.today(),
-        dt.date.today() +
-        dt.timedelta(
-            days=1))
-    print("Events: ")
-    print(
-        oc.get_events(
-            dt.date.today(),
-            dt.date.today() +
-            dt.timedelta(
-                days=1)))
-    print("---------------------")
-    print("Tasks:")
-    print(oc.getActiveTodos())
 
-    begin = dt.datetime.today() - dt.timedelta(days=2)
-    end = dt.datetime.today()
+    if args.print_events:
+        print(oc.todays_agenda_as_markdown())
 
-    oc = OutlookConnector()
+    if args.print_tasks:
+        print(oc.active_todos_as_markdown())
