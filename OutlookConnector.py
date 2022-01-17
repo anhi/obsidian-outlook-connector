@@ -8,10 +8,6 @@ import re
 from ftfy import fix_encoding
 
 
-def print_encoded(s):
-    print(fix_encoding(s))
-
-
 class OutlookConnector:
     olFolderCalendar = 9
     olFolderTodo = 28
@@ -66,8 +62,8 @@ class OutlookConnector:
 
         for todo in todos:
             try:
-                result += f"[ ] {todo.Subject}\n"
-            except e:
+                result += f"[ ] {fix_encoding(todo.Subject)}\n"
+            except:
                 pass
 
 
@@ -77,29 +73,9 @@ class OutlookConnector:
 
         return self.events_to_markdown(calendar)
 
-    def isMailOrTask(self, item):
-        mc=item.MessageClass
-        return mc == 'IPM.Task' or mc.startswith('IPM.Note')
-
-    def safeGetIsActive(self, item):
-        is_active=False
-        try:
-            mc=item.MessageClass
-
-            if mc == 'IPM.Task':
-                is_active=item.Complete == False
-            elif mc.startswith('IPM.Note'):
-                is_active=item.IsMarkedAsTask and (
-                    item.TaskCompletedDate.year > 3000 or item.FlagStatus == 2)
-            else:
-                False
-        except Exception as e:
-            print("Error with email ", item.Subject, str(e))
-        finally:
-            return is_active
-
-    def getActiveTodos(self):
+    def get_active_todos(self):
         todos = self.ns.getDefaultFolder(self.olFolderTodo).Items
+        
         # Task with [Complete] = False or Note with FlagStatus != 1
         MessageClass = "http://schemas.microsoft.com/mapi/proptag/0x001a001e"
         Complete = "http://schemas.microsoft.com/mapi/id/{00062003-0000-0000-C000-000000000046}/811c000b"
@@ -107,12 +83,9 @@ class OutlookConnector:
 
         restriction = f"@SQL=(({MessageClass}='IPM.Task' AND {Complete}=0) OR ({MessageClass}='IPM.Note' AND (NOT {FlagStatus}=1)))"
         
-        print("Getting active todos...")
         active_todos = todos.Restrict(f'{restriction}')
 
         return active_todos
-        # for todo in active_todos:
-        #  print(todo.Subject)
 
 
 if __name__ == '__main__':
