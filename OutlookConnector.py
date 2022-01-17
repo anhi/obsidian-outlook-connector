@@ -1,9 +1,6 @@
 import datetime as dt
-import pandas as pd
 import win32com.client
 
-import sys
-import re
 
 from ftfy import fix_encoding
 
@@ -66,6 +63,7 @@ class OutlookConnector:
             except:
                 pass
 
+        return result
 
     def todays_agenda_as_markdown(self):
         calendar=self.get_events(dt.date.today(),
